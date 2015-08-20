@@ -1,0 +1,27 @@
+<project name="gim-server-manager-package" default="build" basedir="..">
+	
+	<property name="VERSION" value="1.0"></property>
+	
+	<target name="prepare">
+		<delete dir="temp"></delete>
+		<mkdir dir="temp"/>
+		<mkdir dir="temp/server-manager"/>
+	</target>
+	
+	<target name="copyfile">
+		<copydir dest="temp/server-manager/bin" src="bin"></copydir>
+		<copydir dest="temp/server-manager/conf" src="conf"></copydir>
+		<copy tofile="temp/server-manager/server-manager.jar" file="target/server-manager-${VERSION}.jar"></copy>
+	</target>
+	
+	<target name="package">
+		<zip destfile="temp/server-manager.zip" basedir="temp"></zip>
+	</target>
+	
+	<target name="build">
+		<antcall target="prepare"></antcall>
+		<antcall target="copyfile"></antcall>
+		<antcall target="package"></antcall>
+	</target>
+	
+</project>

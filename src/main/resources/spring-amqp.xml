@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         classpath:/org/springframework/beans/factory/xml/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/context
+         classpath:/org/springframework/context/config/spring-context-3.0.xsd">
+
+	<bean id="rabbitmqConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
+		<property name="host" value="${rabbitmq.host}"></property>
+		<property name="port" value="${rabbitmq.port}"></property>
+		<property name="virtualHost" value="${rabbitmq.virtualhost}"></property>
+		<property name="username" value="${rabbitmq.username}"></property>
+		<property name="password" value="${rabbitmq.password}"></property>
+	</bean>
+	
+	<bean id="rabbitMQTemplate" class="com.asiainfo.gim.common.amqp.rabbitmq.RabbitMQTemplate">
+		<property name="connectionFactory" ref="rabbitmqConnectionFactory"></property>
+	</bean>
+	
+	<bean class="com.asiainfo.gim.server.monitor.agent.ServerReportListener">
+		<property name="cacheManager" ref="cacheManager"></property>
+		<property name="rabbitMQTemplate" ref="rabbitMQTemplate"></property>
+		<property name="serverService" ref="serverService"></property>
+		<property name="connectionFactory" ref="rabbitmqConnectionFactory"></property>
+		<property name="queueName" value="agent_status_report_queue"></property>
+		<property name="exchange" value="agent_status_report_exchange"></property>
+		<property name="routingKey" value="agent_status_report"></property>
+	</bean>
+	
+</beans>

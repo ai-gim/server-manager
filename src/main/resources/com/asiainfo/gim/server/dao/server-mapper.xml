@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asiainfo.gim.server.dao.ServerDao">
+	<resultMap id="server" type="com.asiainfo.gim.server.domain.Server">
+		<id property="id" column="id" />
+		<result property="alias" column="alias"/>
+		<result property="ip" column="ip"/>
+		<result property="mac" column="mac"/>
+		<result property="netmask" column="netmask"/>
+		<result property="monitorType" column="monitor_type"/>
+		<result property="site.rack" column="rack"/>
+		<result property="site.slot" column="size"/>
+		<result property="ipmi.host" column="ipmi_host"/>
+		<result property="ipmi.username" column="ipmi_username"/>
+		<result property="ipmi.password" column="ipmi_password"/>
+		<result property="ssh.host" column="ssh_host"/>
+		<result property="ssh.port" column="ssh_port"/>
+		<result property="ssh.username" column="ssh_username"/>
+		<result property="ssh.password" column="ssh_password"/>
+		<result property="asset.code" column="code"/>
+		<result property="asset.manufacturer" column="manufacturer"/>
+		<result property="asset.modal" column="modal"/>
+		<result property="asset.serialsNo" column="serialsno"/>
+		<result property="asset.contacter" column="contacter"/>
+		<result property="asset.telephone" column="telephone"/>
+		<result property="asset.note" column="note"/>
+	</resultMap>
+
+	<insert id="insertServer" parameterType="com.asiainfo.gim.server.domain.Server">
+		insert into server_server(id, ip, mac, netmask, monitor_type)
+		value(#{id}, #{ip}, #{mac}, #{netmask}, #{monitorType});
+	</insert>
+	
+	<insert id="insertSsh" parameterType="com.asiainfo.gim.server.domain.Server">
+		insert into server_ssh(server_id, host, port, username, password)
+		value(#{id}, #{ssh.host}, #{ssh.port}, #{ssh.username}, #{ssh.password});
+	</insert>
+	
+	<insert id="insertIpmi" parameterType="com.asiainfo.gim.server.domain.Server">
+		insert into server_ipmi(server_id, host, username, password)
+		value(#{id}, #{ipmi.host}, #{ipmi.username}, #{ipmi.password});
+	</insert>
+	
+	<insert id="insertAsset" parameterType="com.asiainfo.gim.server.domain.Server">
+		insert into server_asset(server_id, code, manufacturer, modal, serialsno, contacter, telephone, note)
+		value(#{id}, #{asset.code}, #{asset.manufacturer}, #{asset.modal}, #{asset.serialsNo}, #{asset.contacter}, #{asset.telephone}, #{asset.note});
+	</insert>
+	
+	<select id="listServers" resultMap="server" parameterType="com.asiainfo.gim.server.domain.query.ServerQueryCondition">
+		select * from server_server_view
+		<where>
+			<if test="ip != null">
+				ip = #{ip}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findServerById" resultMap="server" parameterType="java.lang.String">
+		select * from server_server_view where id = #{id};
+	</select>
+	
+	<select id="findServerByIp" resultMap="server" parameterType="java.lang.String">
+		select * from server_server_view where ip = #{ip};
+	</select>
+	
+	<update id="updateServer" parameterType="com.asiainfo.gim.server.domain.Server">
+		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}
+		where id = #{id};
+	</update>
+	
+	<delete id="deleteServer" parameterType="java.lang.String">
+		delete from server_server where id = #{id};
+	</delete>
+	
+	<delete id="deleteServerSsh" parameterType="java.lang.String">
+		delete from server_ssh where server_id = #{id};
+	</delete>
+	
+	<delete id="deleteServerIpmi" parameterType="java.lang.String">
+		delete from server_ipmi where server_id = #{id};
+	</delete>
+	
+	<delete id="deleteServerAsset" parameterType="java.lang.String">
+		delete from server_asset where server_id = #{id};
+	</delete>
+</mapper>

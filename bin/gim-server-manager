@@ -1,0 +1,29 @@
+#!/bin/bash
+
+JAVA_OPTS="-Xms256m -Xmx512m -XX:PermSize=64m -XX:MaxPermSize=128m"
+JDWP_OPTS=
+
+if [ "$1" == "jdwp" ] ;then
+	JDWP_OPTS="-Xdebug -server -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=1002"
+	shift
+fi
+
+if [ ! -n "$1" -o "$1" == "start" ] ;then
+	java $JAVA_OPTS $JDWP_OPTS -jar /usr/local/lib/gim/server-manager/server-manager.jar>log 2>&1 &
+elif [ "$1" == run ] ;then
+	java $JAVA_OPTS $JDWP_OPTS -jar /usr/local/lib/gim/server-manager/server-manager.jar
+elif [ "$1" == "stop" ] ;then
+	PID=`(ps -ef | grep server-manager.jar | grep -v grep | awk '{print $2}')`
+	if [ "$PID" == "" ]; then
+		echo "server-manager service is not running"
+	else
+		ps -ef | grep server-manager.jar | grep -v grep | awk '{print $2}' | xargs kill -9
+	fi
+elif [ "$1" == "status" ] ;then
+	PID=`(ps -ef | grep server-manager.jar | grep -v grep | awk '{print $2}')`
+	if [ "$PID" == "" ]; then
+		echo "server-manager service is not running"
+	else
+		echo "server-manager service is running, PID is" "$PID"
+	fi
+fi

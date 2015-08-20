@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         classpath:/org/springframework/beans/factory/xml/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/context
+         classpath:/org/springframework/context/config/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="com.asiainfo.gim" />
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:/etc/gim/server-manage.conf</value>
+				<value>file:/etc/gim/db.conf</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean class="com.asiainfo.gim.common.spring.SpringContext">
+		<property name="properties">
+			<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="locations">
+					<list>
+						<value>file:/etc/gim/server-manage.conf</value>
+						<value>file:/etc/gim/db.conf</value>
+		            </list>
+		        </property>
+		        <property name="fileEncoding" value="UTF-8"></property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="cacheManager" class="org.springframework.cache.concurrent.ConcurrentMapCacheManager"></bean>
+	
+</beans>
