@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `server_server` (
   `rack` INT(45) NULL,
   `size` INT(45) NULL,
   `monitor_type` TINYINT NOT NULL,
+  `properties` TEXT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   UNIQUE INDEX `ip_UNIQUE` (`ip` ASC))

@@ -11,6 +11,7 @@
 		<result property="mac" column="mac"/>
 		<result property="netmask" column="netmask"/>
 		<result property="monitorType" column="monitor_type"/>
+		<result property="properties" column="properties" javaType="java.util.Map" jdbcType="VARCHAR"/>
 		<result property="site.rack" column="rack"/>
 		<result property="site.slot" column="size"/>
 		<result property="ipmi.host" column="ipmi_host"/>
@@ -27,11 +28,12 @@
 		<result property="asset.contacter" column="contacter"/>
 		<result property="asset.telephone" column="telephone"/>
 		<result property="asset.note" column="note"/>
+		<result property="asset.note" column="note"/>
 	</resultMap>
 
 	<insert id="insertServer" parameterType="com.asiainfo.gim.server.domain.Server">
-		insert into server_server(id, ip, mac, netmask, monitor_type)
-		value(#{id}, #{ip}, #{mac}, #{netmask}, #{monitorType});
+		insert into server_server(id, ip, mac, netmask, monitor_type, properties)
+		value(#{id}, #{ip}, #{mac}, #{netmask}, #{monitorType}, #{properties, jdbcType=VARCHAR});
 	</insert>
 	
 	<insert id="insertSsh" parameterType="com.asiainfo.gim.server.domain.Server">
@@ -67,7 +69,7 @@
 	</select>
 	
 	<update id="updateServer" parameterType="com.asiainfo.gim.server.domain.Server">
-		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}
+		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}, properties = #{properties, jdbcType=VARCHAR}
 		where id = #{id};
 	</update>
 	
