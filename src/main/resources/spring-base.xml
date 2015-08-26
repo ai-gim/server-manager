@@ -12,8 +12,8 @@
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>file:F:/git/auth_client-common/server-manager/conf/server-manage.conf</value>
-				<value>file:F:/git/auth_client-common/server-manager/conf/db.conf</value>
+				<value>file:/etc/gim/server-manage.conf</value> 
+				<value>file:/etc/gim/db.conf</value>
 			</list>
 		</property>
 	</bean>
@@ -23,8 +23,8 @@
 			<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
 				<property name="locations">
 					<list>
-						<value>file:F:/git/auth_client-common/server-manager/conf/server-manage.conf</value>
-						<value>file:F:/git/auth_client-common/server-manager/conf/db.conf</value>
+						<value>file:/etc/gim/server-manage.conf</value> 
+						<value>file:/etc/gim/db.conf</value>
 		            </list>
 		        </property>
 		        <property name="fileEncoding" value="UTF-8"></property>
