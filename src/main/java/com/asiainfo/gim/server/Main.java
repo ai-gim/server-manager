@@ -30,7 +30,7 @@ public class Main
 	public static void main(String[] args) throws Exception
 	{
 		// 初始化Spring
-		String[] springConfigFiles = {"spring-base.xml", "spring-db.xml", "spring-amqp.xml", "spring-ipmi.xml"};
+		String[] springConfigFiles = {"spring-base.xml", "spring-db.xml", "spring-amqp.xml", "spring-ipmi.xml", "spring-quartz.xml"};
 		ApplicationContext context = new ClassPathXmlApplicationContext(springConfigFiles);
 
 		// 初始化日志
