@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+         classpath:/org/springframework/beans/factory/xml/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/context
+         classpath:/org/springframework/context/config/spring-context-3.0.xsd">
+
+	<!-- 采集任务执行线程池 -->
+	<bean id="taskExecutThreadPool"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${task.threadpool.minSize}" />
+		<property name="maxPoolSize" value="${task.threadpool.maxSize}" />
+		<property name="queueCapacity" value="${task.threadpool.queueCapacity}"></property>
+	</bean>
+	
+	<bean lazy-init="false" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="server_status_collect_trigger" />
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 服务器状态采集任务  -->
+	<bean id="server_status_collect_job" class="org.quartz.JobDetail">
+		<property name="name" value="server_status_collect_job"></property>
+		<property name="jobClass"
+			value="com.asiainfo.gim.server.monitor.icmp.ServerStatusCollectJob"></property>
+	</bean>
+	<bean id="server_status_collect_trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="server_status_collect_job"></property>
+		<property name="cronExpression" value="0/15 * * * * ?"></property>
+	</bean>
+</beans>
