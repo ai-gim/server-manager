@@ -26,7 +26,7 @@ import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.dao.ServerDao;
 import com.asiainfo.gim.server.domain.Server;
 import com.asiainfo.gim.server.domain.query.ServerQueryCondition;
-import com.asiainfo.gim.server.monitor.icmp.ServerStatusCollectJob;
+import com.asiainfo.gim.server.monitor.icmp.ICMPDetector;
 import com.asiainfo.gim.server.util.ipmi.IPMITemplate;
 import com.veraxsystems.vxipmi.coding.commands.IpmiVersion;
 import com.veraxsystems.vxipmi.coding.commands.chassis.ChassisControl;
@@ -105,8 +105,8 @@ public class ServerService
 		serverDao.insertServer(server);
 		
 		//新增完成后先查询一次服务器的状态
-		ServerStatusCollectJob job = new ServerStatusCollectJob();
-		job.getServerStatus(server);
+		boolean isReachable = ICMPDetector.isReachable(server.getIp(), 3000);
+		server.getServerRuntime().setStatus(isReachable ? 1 : 0);
 		
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		cache.put(server.getId(), server);

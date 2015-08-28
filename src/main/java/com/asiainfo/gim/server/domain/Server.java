@@ -33,7 +33,7 @@ public class Server
 	private Ipmi ipmi;
 	private Ssh ssh;
 
-	private ServerRuntime serverRuntime;
+	private ServerRuntime serverRuntime = new ServerRuntime();
 	
 	private Map<String, String> properties;
 

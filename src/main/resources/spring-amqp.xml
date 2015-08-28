@@ -24,9 +24,9 @@
 		<property name="rabbitMQTemplate" ref="rabbitMQTemplate"></property>
 		<property name="serverService" ref="serverService"></property>
 		<property name="connectionFactory" ref="rabbitmqConnectionFactory"></property>
-		<property name="queueName" value="agent_status_report_queue"></property>
-		<property name="exchange" value="agent_status_report_exchange"></property>
-		<property name="routingKey" value="agent_status_report"></property>
+		<property name="queueName" value="server_report_queue"></property>
+		<property name="exchange" value="server_report_exchange"></property>
+		<property name="routingKey" value="server_report"></property>
 	</bean>
 	
 </beans>
