@@ -25,4 +25,10 @@ public interface Constant
 		public static final int SSH = 2;
 		public static final int AGENT = 3;
 	}
+	
+	public static interface ServerStatus
+	{
+		public static final int UNREACHABLE = 0;
+		public static final int NORMAL = 1;
+	}
 }

@@ -8,6 +8,8 @@
  */
 package com.asiainfo.gim.server.domain;
 
+import java.util.Date;
+
 /**
  * @author zhangli
  *
@@ -16,11 +18,11 @@ public class ServerRuntime
 {
 	private Integer status;
 
-	private float cpuRate;
-	private float memoryRate;
-	private float diskRate;
-
+	private int cpuRate;
+	private int memoryRate;
+	private int diskRate;
 	private long runTime;
+	private Date refreshTime;
 
 	public Integer getStatus()
 	{
@@ -37,29 +39,29 @@ public class ServerRuntime
 		return cpuRate;
 	}
 
-	public void setCpuRate(float cpuRate)
-	{
-		this.cpuRate = cpuRate;
-	}
-
-	public float getMemoryRate()
+	public int getMemoryRate()
 	{
 		return memoryRate;
 	}
 
-	public void setMemoryRate(float memoryRate)
+	public void setMemoryRate(int memoryRate)
 	{
 		this.memoryRate = memoryRate;
 	}
 
-	public float getDiskRate()
+	public int getDiskRate()
 	{
 		return diskRate;
 	}
 
-	public void setDiskRate(float diskRate)
+	public void setDiskRate(int diskRate)
 	{
 		this.diskRate = diskRate;
+	}
+
+	public void setCpuRate(int cpuRate)
+	{
+		this.cpuRate = cpuRate;
 	}
 
 	public long getRunTime()
@@ -71,4 +73,15 @@ public class ServerRuntime
 	{
 		this.runTime = runTime;
 	}
+
+	public Date getRefreshTime()
+	{
+		return refreshTime;
+	}
+
+	public void setRefreshTime(Date refreshTime)
+	{
+		this.refreshTime = refreshTime;
+	}
+
 }

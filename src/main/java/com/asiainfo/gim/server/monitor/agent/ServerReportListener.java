@@ -8,7 +8,10 @@
  */
 package com.asiainfo.gim.server.monitor.agent;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,6 +22,9 @@ import com.asiainfo.gim.common.amqp.rabbitmq.QueueListener;
 import com.asiainfo.gim.common.amqp.rabbitmq.RabbitMQTemplate;
 import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.domain.Server;
+import com.asiainfo.gim.server.domain.ServerRuntime;
+import com.asiainfo.gim.server.monitor.agent.domain.Host;
+import com.asiainfo.gim.server.monitor.agent.domain.Metric;
 import com.asiainfo.gim.server.service.ServerService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,25 +65,43 @@ public class ServerReportListener extends QueueListener implements InitializingB
 		log.debug("receive message: " + new String(bytes));
 		try
 		{
-			Server server = om.readValue(bytes, Server.class);
 			Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
-			if (cache.get(server.getId()) == null)
+			Host host = om.readValue(bytes, Host.class);
+			Server server = serverService.findServerByIp(host.getIp());
+			if (server == null)
 			{
+				server = new Server();
+				server.setIp(host.getIp());
 				server.setMonitorType(Constant.MonitorType.AGENT);
 				serverService.addServer(server);
 			}
 			else
 			{
-				Server serverInCache = (Server) cache.get(server.getId()).get();
-				if (needUpdate(server, serverInCache))
+				server = (Server) cache.get(server.getId()).get();
+				if (server == null)
 				{
-					serverInCache.setIp(server.getIp());
-					serverInCache.setMac(server.getMac());
-					serverInCache.setNetmask(server.getNetmask());
-					serverInCache.setMonitorType(Constant.MonitorType.AGENT);
-					serverService.updateServer(serverInCache);
+					return;
 				}
 			}
+
+			// 更新监控类型
+			if (server.getMonitorType() != Constant.MonitorType.AGENT)
+			{
+				serverService.updateServer(server);
+			}
+
+			// 状态
+			if (System.currentTimeMillis() - host.getReportTime().getTime() > 3 * 60 * 1000)
+			{
+				server.getServerRuntime().setStatus(Constant.ServerStatus.UNREACHABLE);
+			}
+			else
+			{
+				server.getServerRuntime().setStatus(Constant.ServerStatus.NORMAL);
+			}
+			server.getServerRuntime().setRefreshTime(host.getReportTime());
+
+			processMetrics(server, host.getMetrics());
 		}
 		catch (Exception e)
 		{
@@ -85,25 +109,25 @@ public class ServerReportListener extends QueueListener implements InitializingB
 		}
 	}
 
-	private boolean needUpdate(Server server, Server serverInCache)
+	private void processMetrics(Server server, Map<String, Metric> metrics)
 	{
-		if (!StringUtils.equals(server.getIp(), serverInCache.getIp()))
-		{
-			return true;
-		}
-		if (!StringUtils.equals(server.getMac(), serverInCache.getMac()))
-		{
-			return true;
-		}
-		if (!StringUtils.equals(server.getNetmask(), serverInCache.getNetmask()))
-		{
-			return true;
-		}
-		if (serverInCache.getMonitorType() != Constant.MonitorType.AGENT)
-		{
-			return true;
-		}
-		return false;
+		ServerRuntime serverRuntime = server.getServerRuntime();
+
+		// cpu使用率
+		int cpuIdle = ((Double) metrics.get("cpu_idle").getValue()).intValue();
+		serverRuntime.setCpuRate(100 - cpuIdle);
+
+		// 内存使用率
+		double memTotal = (double) metrics.get("mem_total").getValue();
+		double memFree = (double) metrics.get("mem_free").getValue();
+		double memUsed = memTotal = memFree;
+		serverRuntime.setMemoryRate((int) (memUsed / memTotal));
+
+		// 磁盘使用率
+		double diskTotal = (double) metrics.get("disk_total").getValue();
+		double diskFree = (double) metrics.get("disk_free").getValue();
+		double diskUsed = diskTotal - diskFree;
+		serverRuntime.setDiskRate((int) (diskUsed / diskTotal));
 	}
 
 	@Override
@@ -112,10 +136,8 @@ public class ServerReportListener extends QueueListener implements InitializingB
 		rabbitMQTemplate.exchangeDeclare(exchange, "direct");
 		rabbitMQTemplate.queueDeclare(queueName);
 		rabbitMQTemplate.bind(exchange, queueName, routingKey);
-		
+
 		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		
-		
 		this.start();
 	}
 }
