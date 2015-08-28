@@ -10,7 +10,9 @@
 package com.asiainfo.gim.server.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -24,6 +26,7 @@ import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.dao.ServerDao;
 import com.asiainfo.gim.server.domain.Server;
 import com.asiainfo.gim.server.domain.query.ServerQueryCondition;
+import com.asiainfo.gim.server.monitor.icmp.ServerStatusCollectJob;
 import com.asiainfo.gim.server.util.ipmi.IPMITemplate;
 import com.veraxsystems.vxipmi.coding.commands.IpmiVersion;
 import com.veraxsystems.vxipmi.coding.commands.chassis.ChassisControl;
@@ -66,15 +69,13 @@ public class ServerService
 
 	public List<Server> listServers(ServerQueryCondition serverQueryCondition)
 	{
-		List<Server> servers = serverDao.listServers(serverQueryCondition);
-		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
-		
 		List<Server> serverInCaches = new ArrayList<Server>();
-		for (Server server : servers)
+		Collection<Object> servers = ((Map)cacheManager.getCache(Constant.CacheName.SERVER_CACHE).getNativeCache()).values();
+		for (Object obj : servers)
 		{
-			serverInCaches.add((Server) cache.get(server.getId()).get());
+			Server serverInCache = (Server) obj;
+			serverInCaches.add(serverInCache);
 		}
-			
 		return serverInCaches;
 	}
 
@@ -103,6 +104,10 @@ public class ServerService
 
 		serverDao.insertServer(server);
 		
+		//新增完成后先查询一次服务器的状态
+		ServerStatusCollectJob job = new ServerStatusCollectJob();
+		job.getServerStatus(server);
+		
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		cache.put(server.getId(), server);
 		
@@ -124,7 +129,7 @@ public class ServerService
 		serverInCache.setMac(server.getMac());
 		serverInCache.setNetmask(server.getNetmask());
 		serverInCache.setMonitorType(server.getMonitorType());
-		cache.put(server.getId(), serverInCache);
+		serverInCache.setProperties(server.getProperties());
 		
 		return findServerById(server.getId());
 	}
@@ -137,7 +142,6 @@ public class ServerService
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		Server serverInCache = (Server) cache.get(server.getId()).get();
 		serverInCache.setSsh(server.getSsh());
-		cache.put(server.getId(), serverInCache);
 		
 		return findServerById(server.getId());
 	}
@@ -150,7 +154,6 @@ public class ServerService
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		Server serverInCache = (Server) cache.get(server.getId()).get();
 		serverInCache.setIpmi(server.getIpmi());
-		cache.put(server.getId(), serverInCache);
 		
 		return findServerById(server.getId());
 	}
@@ -163,7 +166,6 @@ public class ServerService
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		Server serverInCache = (Server) cache.get(server.getId()).get();
 		serverInCache.setAsset(server.getAsset());
-		cache.put(server.getId(), serverInCache);
 		
 		return findServerById(server.getId());
 	}

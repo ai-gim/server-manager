@@ -44,7 +44,6 @@ public class ServerStatusCollectJob implements Job
 		Collection<Object> servers = ((Map)cacheManager.getCache(Constant.CacheName.SERVER_CACHE).getNativeCache()).values();
 		for (Object obj : servers)
 		{
-			
 			Server serverInCache = (Server) obj;
 			thread.execute(new CollectThread(serverInCache));
 		}
@@ -61,38 +60,42 @@ public class ServerStatusCollectJob implements Job
 
 		public void run()
 		{
-			ServerRuntime serverRuntime = server.getServerRuntime();
-			if (server.getServerRuntime() == null)
-			{
-				serverRuntime = new ServerRuntime();
-				server.setServerRuntime(serverRuntime);
-			}
-
-			try
-			{
-				InetAddress address = InetAddress.getByName(server.getIp());
-
-				// 1表示状态OK，0表示状态异常
-				if (address.isReachable(3000))
-				{
-					serverRuntime.setStatus(1);
-				}
-				else
-				{
-					serverRuntime.setStatus(0);
-				}
-			}
-			catch (UnknownHostException e)
-			{
-				serverRuntime.setStatus(0);
-				log.error(e.getMessage(), e);
-			}
-			catch (IOException e)
-			{
-				serverRuntime.setStatus(0);
-				log.error(e.getMessage(), e);
-			}
+			getServerStatus(server);
+		}
+	}
+	
+	public void getServerStatus(Server server)
+	{
+		ServerRuntime serverRuntime = server.getServerRuntime();
+		if (server.getServerRuntime() == null)
+		{
+			serverRuntime = new ServerRuntime();
+			server.setServerRuntime(serverRuntime);
 		}
 
+		try
+		{
+			InetAddress address = InetAddress.getByName(server.getIp());
+
+			// 1表示状态OK，0表示状态异常
+			if (address.isReachable(3000))
+			{
+				serverRuntime.setStatus(1);
+			}
+			else
+			{
+				serverRuntime.setStatus(0);
+			}
+		}
+		catch (UnknownHostException e)
+		{
+			serverRuntime.setStatus(0);
+			log.error(e.getMessage(), e);
+		}
+		catch (IOException e)
+		{
+			serverRuntime.setStatus(0);
+			log.error(e.getMessage(), e);
+		}
 	}
 }
