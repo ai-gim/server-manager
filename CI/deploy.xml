@@ -10,7 +10,22 @@
 				<include name="server-manager.zip"/>
 			</fileset>
 		</scp>
+		<scp todir="${USER}:${PASSWD}@172.16.101.101:/usr/local/lib/gim" trust="true">
+			<fileset dir="temp">
+				<include name="server-manager.zip"/>
+			</fileset>
+		</scp>
 		<sshexec host="${HOST}" username="${USER}"  password="${PASSWD}" trust="true" command="
+			cd /usr/local/lib/gim;
+			rm -rf server-manager;
+			unzip server-manager.zip;
+			rm -rf server-manager.zip;
+			cd server-manager/bin;
+			chmod 755 *;
+			./gim-server-manager stop;
+			./gim-server-manager start;
+			"/>
+		<sshexec host="172.16.101.101" username="${USER}"  password="${PASSWD}" trust="true" command="
 			cd /usr/local/lib/gim;
 			rm -rf server-manager;
 			unzip server-manager.zip;
