@@ -41,7 +41,10 @@ public class ServerStatusCollectJob implements Job
 		for (Object obj : servers)
 		{
 			Server serverInCache = (Server) obj;
-			thread.execute(new CollectThread(serverInCache));
+			if (serverInCache.getMonitorType() == 1)
+			{
+				thread.execute(new CollectThread(serverInCache));
+			}
 		}
 	}
 
