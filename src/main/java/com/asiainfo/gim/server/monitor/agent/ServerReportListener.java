@@ -10,8 +10,6 @@ package com.asiainfo.gim.server.monitor.agent;
 
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -133,10 +131,7 @@ public class ServerReportListener extends QueueListener implements InitializingB
 	@Override
 	public void afterPropertiesSet() throws Exception
 	{
-		rabbitMQTemplate.exchangeDeclare(exchange, "direct");
-		rabbitMQTemplate.queueDeclare(queueName);
-		rabbitMQTemplate.bind(exchange, queueName, routingKey);
-
+		rabbitMQTemplate.exchangeDeclare(exchange, "fanout");
 		om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		this.start();
 	}
