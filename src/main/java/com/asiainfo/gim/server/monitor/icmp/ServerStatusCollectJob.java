@@ -22,6 +22,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.asiainfo.gim.common.spring.SpringContext;
 import com.asiainfo.gim.server.Constant;
+import com.asiainfo.gim.server.Constant.MonitorType;
 import com.asiainfo.gim.server.domain.Server;
 
 /**
@@ -41,7 +42,10 @@ public class ServerStatusCollectJob implements Job
 		for (Object obj : servers)
 		{
 			Server serverInCache = (Server) obj;
-			thread.execute(new CollectThread(serverInCache));
+			if (serverInCache.getMonitorType() == MonitorType.ICMP)
+			{
+				thread.execute(new CollectThread(serverInCache));
+			}
 		}
 	}
 
