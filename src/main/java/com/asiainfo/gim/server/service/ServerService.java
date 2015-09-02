@@ -23,6 +23,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import com.asiainfo.gim.server.Constant;
+import com.asiainfo.gim.server.Constant.MonitorType;
 import com.asiainfo.gim.server.dao.ServerDao;
 import com.asiainfo.gim.server.domain.Server;
 import com.asiainfo.gim.server.domain.ServerRuntime;
@@ -106,14 +107,17 @@ public class ServerService
 		serverDao.insertServer(server);
 		
 		//新增完成后先查询一次服务器的状态
-		boolean isReachable = ICMPDetector.isReachable(server.getIp(), 3000);
-		ServerRuntime serverRuntime = server.getServerRuntime();
-		if (serverRuntime == null)
+		if (server.getMonitorType() == MonitorType.ICMP)
 		{
-			serverRuntime = new ServerRuntime();
-			server.setServerRuntime(serverRuntime);
+			boolean isReachable = ICMPDetector.isReachable(server.getIp(), 3000);
+			ServerRuntime serverRuntime = server.getServerRuntime();
+			if (serverRuntime == null)
+			{
+				serverRuntime = new ServerRuntime();
+				server.setServerRuntime(serverRuntime);
+			}
+			serverRuntime.setStatus(isReachable ? 1 : 0);
 		}
-		serverRuntime.setStatus(isReachable ? 1 : 0);
 		
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		cache.put(server.getId(), server);

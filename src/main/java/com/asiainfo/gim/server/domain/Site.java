@@ -4,7 +4,8 @@ public class Site
 {
 	private Integer rack;
 	private Integer slot;
-
+	private Integer size;
+	
 	public Integer getRack()
 	{
 		return rack;
@@ -23,5 +24,15 @@ public class Site
 	public void setSlot(Integer slot)
 	{
 		this.slot = slot;
+	}
+
+	public Integer getSize()
+	{
+		return size;
+	}
+
+	public void setSize(Integer size)
+	{
+		this.size = size;
 	}
 }
