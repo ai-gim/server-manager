@@ -11,7 +11,7 @@
 	</appender>
 
 	<appender name="ApiRollingFile" class="org.apache.log4j.RollingFileAppender">  
-		<param name="File" value="/var/log/gim/auth/api.log" />
+		<param name="File" value="/var/log/gim/server/api.log" />
 		<param name="Append" value="true" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -20,7 +20,7 @@
 	</appender>
 	
 	<appender name="RollingFile" class="org.apache.log4j.RollingFileAppender">  
-		<param name="File" value="/var/log/gim/auth/auth.log" />
+		<param name="File" value="/var/log/gim/server/server.log" />
 		<param name="Append" value="true" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -31,6 +31,12 @@
 	<category name="org.springframework">     
     	<level value="ERROR" />   
 		<appender-ref ref="RollingFile" />  
+		<appender-ref ref="Console" />
+	</category>
+	
+	<category name="com.asiainfo.gim.server">
+    	<level value="INFO" />   
+		<appender-ref ref="ApiRollingFile" />  
 		<appender-ref ref="Console" />  
 	</category>
 	
