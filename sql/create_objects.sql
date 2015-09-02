@@ -61,7 +61,7 @@ ENGINE = InnoDB;
 CREATE VIEW `server_server_view` AS
 	select a.*, b.code, b.manufacturer, b.modal, b.serialsno, b.contacter, b.telephone, b.note, 
     c.host ssh_host, c.port ssh_port, c.username ssh_username, c.password ssh_password,
-    d.host ipmi_host, d.username impi_username, d.password ipmi_password
+    d.host ipmi_host, d.username ipmi_username, d.password ipmi_password
     from server_server a left join server_asset b on a.id = b.server_id
     left join server_ssh c on a.id = c.server_id
     left join server_ipmi d on a.id = d.server_id

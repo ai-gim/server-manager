@@ -13,7 +13,8 @@
 		<result property="monitorType" column="monitor_type"/>
 		<result property="properties" column="properties" javaType="java.util.Map" jdbcType="VARCHAR"/>
 		<result property="site.rack" column="rack"/>
-		<result property="site.slot" column="size"/>
+		<result property="site.slot" column="slot"/>
+		<result property="site.size" column="size"/>
 		<result property="ipmi.host" column="ipmi_host"/>
 		<result property="ipmi.username" column="ipmi_username"/>
 		<result property="ipmi.password" column="ipmi_password"/>
@@ -69,7 +70,8 @@
 	</select>
 	
 	<update id="updateServer" parameterType="com.asiainfo.gim.server.domain.Server">
-		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}, properties = #{properties, jdbcType=VARCHAR}
+		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}, properties = #{properties, jdbcType=VARCHAR},
+		rack = #{site.rack}, size = #{site.size}, slot = #{site.slot}
 		where id = #{id};
 	</update>
 	

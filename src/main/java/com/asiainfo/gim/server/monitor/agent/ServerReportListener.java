@@ -8,8 +8,6 @@
  */
 package com.asiainfo.gim.server.monitor.agent;
 
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +20,6 @@ import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.domain.Server;
 import com.asiainfo.gim.server.domain.ServerRuntime;
 import com.asiainfo.gim.server.monitor.agent.domain.Host;
-import com.asiainfo.gim.server.monitor.agent.domain.Metric;
 import com.asiainfo.gim.server.service.ServerService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -81,51 +78,34 @@ public class ServerReportListener extends QueueListener implements InitializingB
 					return;
 				}
 			}
-
-			// 更新监控类型
-			if (server.getMonitorType() != Constant.MonitorType.AGENT)
+			//主机名
+			server.setHostname(host.getName());
+			
+			//runtime对象
+			ServerRuntime serverRuntime = server.getServerRuntime();
+			if (serverRuntime == null)
 			{
-				serverService.updateServer(server);
+				serverRuntime = new ServerRuntime();
+				server.setServerRuntime(serverRuntime);
 			}
-
+			
 			// 状态
 			if (System.currentTimeMillis() - host.getReportTime().getTime() > 3 * 60 * 1000)
 			{
-				server.getServerRuntime().setStatus(Constant.ServerStatus.UNREACHABLE);
+				serverRuntime.setStatus(Constant.ServerStatus.UNREACHABLE);
 			}
 			else
 			{
-				server.getServerRuntime().setStatus(Constant.ServerStatus.NORMAL);
+				serverRuntime.setStatus(Constant.ServerStatus.NORMAL);
 			}
-			server.getServerRuntime().setRefreshTime(host.getReportTime());
-
-			processMetrics(server, host.getMetrics());
+			
+			serverRuntime.setReportTime(host.getReportTime());
+			serverRuntime.setMetrics(host.getMetrics());
 		}
 		catch (Exception e)
 		{
 			log.error(e.getMessage(), e);
 		}
-	}
-
-	private void processMetrics(Server server, Map<String, Metric> metrics)
-	{
-		ServerRuntime serverRuntime = server.getServerRuntime();
-
-		// cpu使用率
-		int cpuIdle = ((Double) metrics.get("cpu_idle").getValue()).intValue();
-		serverRuntime.setCpuRate(100 - cpuIdle);
-
-		// 内存使用率
-		double memTotal = (double) metrics.get("mem_total").getValue();
-		double memFree = (double) metrics.get("mem_free").getValue();
-		double memUsed = memTotal = memFree;
-		serverRuntime.setMemoryRate((int) (memUsed / memTotal));
-
-		// 磁盘使用率
-		double diskTotal = (double) metrics.get("disk_total").getValue();
-		double diskFree = (double) metrics.get("disk_free").getValue();
-		double diskUsed = diskTotal - diskFree;
-		serverRuntime.setDiskRate((int) (diskUsed / diskTotal));
 	}
 
 	@Override

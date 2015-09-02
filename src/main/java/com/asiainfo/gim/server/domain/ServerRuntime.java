@@ -9,6 +9,9 @@
 package com.asiainfo.gim.server.domain;
 
 import java.util.Date;
+import java.util.Map;
+
+import com.asiainfo.gim.server.monitor.agent.domain.Metric;
 
 /**
  * @author zhangli
@@ -17,12 +20,8 @@ import java.util.Date;
 public class ServerRuntime
 {
 	private Integer status;
-
-	private int cpuRate;
-	private int memoryRate;
-	private int diskRate;
-	private long runTime;
-	private Date refreshTime;
+	private Map<String, Metric> metrics;
+	private Date reportTime;
 
 	public Integer getStatus()
 	{
@@ -34,54 +33,23 @@ public class ServerRuntime
 		this.status = status;
 	}
 
-	public float getCpuRate()
+	public Map<String, Metric> getMetrics()
 	{
-		return cpuRate;
+		return metrics;
 	}
 
-	public int getMemoryRate()
+	public void setMetrics(Map<String, Metric> metrics)
 	{
-		return memoryRate;
+		this.metrics = metrics;
 	}
 
-	public void setMemoryRate(int memoryRate)
+	public Date getReportTime()
 	{
-		this.memoryRate = memoryRate;
+		return reportTime;
 	}
 
-	public int getDiskRate()
+	public void setReportTime(Date reportTime)
 	{
-		return diskRate;
+		this.reportTime = reportTime;
 	}
-
-	public void setDiskRate(int diskRate)
-	{
-		this.diskRate = diskRate;
-	}
-
-	public void setCpuRate(int cpuRate)
-	{
-		this.cpuRate = cpuRate;
-	}
-
-	public long getRunTime()
-	{
-		return runTime;
-	}
-
-	public void setRunTime(long runTime)
-	{
-		this.runTime = runTime;
-	}
-
-	public Date getRefreshTime()
-	{
-		return refreshTime;
-	}
-
-	public void setRefreshTime(Date refreshTime)
-	{
-		this.refreshTime = refreshTime;
-	}
-
 }
