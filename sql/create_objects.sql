@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `server_server` (
   `mac` VARCHAR(45) NULL,
   `netmask` VARCHAR(45) NULL,
   `rack` INT(45) NULL,
+  `slot` INT(45) NULL,
   `size` INT(45) NULL,
   `monitor_type` TINYINT NOT NULL,
   `properties` TEXT NULL,
