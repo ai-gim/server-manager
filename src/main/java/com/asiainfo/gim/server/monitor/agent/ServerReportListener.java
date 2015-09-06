@@ -72,12 +72,17 @@ public class ServerReportListener extends QueueListener implements InitializingB
 			}
 			else
 			{
-				server = (Server) cache.get(server.getId()).get();
-				if (server == null)
+				Server serverInCache = (Server) cache.get(server.getId()).get();
+				if (serverInCache == null)
 				{
-					return;
+					cache.put(server.getId(), server);
+				}
+				else
+				{
+					server = serverInCache;
 				}
 			}
+			
 			//主机名
 			server.setHostname(host.getName());
 			
@@ -87,16 +92,6 @@ public class ServerReportListener extends QueueListener implements InitializingB
 			{
 				serverRuntime = new ServerRuntime();
 				server.setServerRuntime(serverRuntime);
-			}
-			
-			// 状态
-			if (System.currentTimeMillis() - host.getReportTime().getTime() > 3 * 60 * 1000)
-			{
-				serverRuntime.setStatus(Constant.ServerStatus.UNREACHABLE);
-			}
-			else
-			{
-				serverRuntime.setStatus(Constant.ServerStatus.NORMAL);
 			}
 			
 			serverRuntime.setReportTime(host.getReportTime());

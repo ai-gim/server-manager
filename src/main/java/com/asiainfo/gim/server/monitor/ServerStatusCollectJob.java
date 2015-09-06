@@ -7,7 +7,7 @@
  * @version V1.0
  * 
  */
-package com.asiainfo.gim.server.monitor.icmp;
+package com.asiainfo.gim.server.monitor;
 
 import java.util.Collection;
 import java.util.Map;
@@ -23,7 +23,10 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import com.asiainfo.gim.common.spring.SpringContext;
 import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.Constant.MonitorType;
+import com.asiainfo.gim.server.Constant.ServerStatus;
 import com.asiainfo.gim.server.domain.Server;
+import com.asiainfo.gim.server.domain.ServerRuntime;
+import com.asiainfo.gim.server.monitor.icmp.ICMPDetector;
 
 /**
  * @author luyang
@@ -38,13 +41,36 @@ public class ServerStatusCollectJob implements Job
 		CacheManager cacheManager = (CacheManager) SpringContext.getBean("cacheManager");
 		ThreadPoolTaskExecutor thread = (ThreadPoolTaskExecutor) SpringContext.getBean("taskExecutThreadPool");
 
-		Collection<Object> servers = ((Map)cacheManager.getCache(Constant.CacheName.SERVER_CACHE).getNativeCache()).values();
+		Collection<Object> servers = ((Map) cacheManager.getCache(Constant.CacheName.SERVER_CACHE).getNativeCache())
+				.values();
 		for (Object obj : servers)
 		{
-			Server serverInCache = (Server) obj;
-			if (serverInCache.getMonitorType() == MonitorType.ICMP)
+			Server server = (Server) obj;
+			if (server.getMonitorType() == MonitorType.ICMP)
 			{
-				thread.execute(new CollectThread(serverInCache));
+				thread.execute(new CollectThread(server));
+			}
+			else if (server.getMonitorType() == MonitorType.AGENT)
+			{
+				ServerRuntime serverRuntime = server.getServerRuntime();
+				if (serverRuntime == null)
+				{
+					serverRuntime = new ServerRuntime();
+					server.setServerRuntime(serverRuntime);
+				}
+
+				if (serverRuntime.getReportTime() == null)
+				{
+					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
+				}
+				else if ((System.currentTimeMillis() - serverRuntime.getReportTime().getTime()) > 60 * 1000)
+				{
+					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
+				}
+				else
+				{
+					serverRuntime.setStatus(ServerStatus.NORMAL);
+				}
 			}
 		}
 	}
