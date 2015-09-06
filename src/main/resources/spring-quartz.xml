@@ -27,7 +27,7 @@
 	<bean id="server_status_collect_job" class="org.quartz.JobDetail">
 		<property name="name" value="server_status_collect_job"></property>
 		<property name="jobClass"
-			value="com.asiainfo.gim.server.monitor.icmp.ServerStatusCollectJob"></property>
+			value="com.asiainfo.gim.server.monitor.ServerStatusCollectJob"></property>
 	</bean>
 	<bean id="server_status_collect_trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="server_status_collect_job"></property>
