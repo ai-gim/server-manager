@@ -70,7 +70,7 @@
 	</select>
 	
 	<update id="updateServer" parameterType="com.asiainfo.gim.server.domain.Server">
-		update server_server set ip = #{ip}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}, properties = #{properties, jdbcType=VARCHAR},
+		update server_server set ip = #{ip}, alias = #{alias}, mac = #{mac}, netmask = #{netmask}, monitor_type = #{monitorType}, properties = #{properties, jdbcType=VARCHAR},
 		rack = #{site.rack}, size = #{site.size}, slot = #{site.slot}
 		where id = #{id};
 	</update>

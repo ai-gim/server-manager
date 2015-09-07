@@ -137,10 +137,12 @@ public class ServerService
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		Server serverInCache = (Server) cache.get(server.getId()).get();
 		serverInCache.setIp(server.getIp());
+		serverInCache.setAlias(server.getAlias());
 		serverInCache.setMac(server.getMac());
 		serverInCache.setNetmask(server.getNetmask());
 		serverInCache.setMonitorType(server.getMonitorType());
 		serverInCache.setProperties(server.getProperties());
+		serverInCache.setSite(server.getSite());
 		
 		return findServerById(server.getId());
 	}
