@@ -120,6 +120,9 @@ public class ServerService
 			serverRuntime.setStatus(isReachable ? 1 : 0);
 		}
 		
+		//新增完成后服务器电源状态为noipmi
+		server.setPowerStatus(ServerPowerStatus.NOIPMI);
+		
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		cache.put(server.getId(), server);
 		
