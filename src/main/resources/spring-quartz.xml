@@ -19,6 +19,7 @@
 		<property name="triggers">
 			<list>
 				<ref bean="server_status_collect_trigger" />
+				<ref bean="server_power_status_collect_trigger" />
 			</list>
 		</property>
 	</bean>
@@ -31,6 +32,17 @@
 	</bean>
 	<bean id="server_status_collect_trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
 		<property name="jobDetail" ref="server_status_collect_job"></property>
+		<property name="cronExpression" value="0/15 * * * * ?"></property>
+	</bean>
+	
+	<!-- 服务器电源状态采集任务  -->
+	<bean id="server_power_status_collect_job" class="org.quartz.JobDetail">
+		<property name="name" value="server_power_status_collect_job"></property>
+		<property name="jobClass"
+			value="com.asiainfo.gim.server.monitor.ipmi.ServerPowerStatusCollectJob"></property>
+	</bean>
+	<bean id="server_power_status_collect_trigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="server_power_status_collect_job"></property>
 		<property name="cronExpression" value="0/15 * * * * ?"></property>
 	</bean>
 </beans>

@@ -31,4 +31,12 @@ public interface Constant
 		public static final int UNREACHABLE = 0;
 		public static final int NORMAL = 1;
 	}
+	
+	public static interface ServerPowerStatus
+	{
+		public static final int POWEROFF = 0;
+		public static final int POWERON = 1;
+		public static final int UNKNOWN = 2;
+		public static final int NOIPMI = 3;
+	}
 }
