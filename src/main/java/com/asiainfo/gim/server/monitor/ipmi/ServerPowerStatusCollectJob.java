@@ -73,7 +73,7 @@ public class ServerPowerStatusCollectJob implements Job
 		{
 			IPMITemplate ipmiTemplate = (IPMITemplate) SpringContext.getBean("ipmiTemplate");
 			
-			GetChassisStatusResponseData rd;
+			GetChassisStatusResponseData rd = null;
 			try
 			{
 				rd = (GetChassisStatusResponseData) ipmiTemplate.sendMessage(server.getIpmi().getHost(),
