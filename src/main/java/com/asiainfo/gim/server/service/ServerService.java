@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.Constant.MonitorType;
+import com.asiainfo.gim.server.Constant.ServerPowerStatus;
 import com.asiainfo.gim.server.dao.ServerDao;
 import com.asiainfo.gim.server.domain.Server;
 import com.asiainfo.gim.server.domain.ServerRuntime;
@@ -119,6 +120,9 @@ public class ServerService
 			serverRuntime.setStatus(isReachable ? 1 : 0);
 		}
 		
+		//新增完成后服务器电源状态为noipmi
+		server.setPowerStatus(ServerPowerStatus.NOIPMI);
+		
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		cache.put(server.getId(), server);
 		
@@ -167,6 +171,18 @@ public class ServerService
 		Cache cache = cacheManager.getCache(Constant.CacheName.SERVER_CACHE);
 		Server serverInCache = (Server) cache.get(server.getId()).get();
 		serverInCache.setIpmi(server.getIpmi());
+		
+		/**
+		 * 修改ipmi信息后,修改服务器电源状态信息
+		 */
+		if (server.getIpmi() != null)
+		{
+			serverInCache.setPowerStatus(ServerPowerStatus.UNKNOWN);
+		}
+		else
+		{
+			serverInCache.setPowerStatus(ServerPowerStatus.NOIPMI);
+		}
 		
 		return findServerById(server.getId());
 	}

@@ -27,6 +27,9 @@ public class Server
 	// 监视类型 1.icmp 2.ssh 3.agent
 	private Integer monitorType;
 
+	//电源状态 ： 0.关机 / 1.开机 / 2.未知  / 3.未配ipmi
+	private Integer powerStatus;
+	
 	private Site site;
 	private Asset asset;
 
@@ -165,6 +168,16 @@ public class Server
 	public void setProperties(Map<String, String> properties)
 	{
 		this.properties = properties;
+	}
+
+	public Integer getPowerStatus()
+	{
+		return powerStatus;
+	}
+
+	public void setPowerStatus(Integer powerStatus)
+	{
+		this.powerStatus = powerStatus;
 	}
 
 }
