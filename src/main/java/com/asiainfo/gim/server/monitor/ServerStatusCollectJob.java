@@ -62,10 +62,12 @@ public class ServerStatusCollectJob implements Job
 				if (serverRuntime.getReportTime() == null)
 				{
 					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
+					serverRuntime.setMetrics(null);
 				}
 				else if ((System.currentTimeMillis() - serverRuntime.getReportTime().getTime()) > 60 * 1000)
 				{
 					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
+					serverRuntime.setMetrics(null);
 				}
 				else
 				{
@@ -88,6 +90,9 @@ public class ServerStatusCollectJob implements Job
 		{
 			boolean isReachable = ICMPDetector.isReachable(server.getIp(), 3000);
 			server.getServerRuntime().setStatus(isReachable ? 1 : 0);
+			
+			//清理server对象的采集数据
+			server.getServerRuntime().setMetrics(null);
 		}
 	}
 }
