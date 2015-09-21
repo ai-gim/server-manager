@@ -25,6 +25,7 @@ import com.asiainfo.gim.common.rest.RestContext;
 import com.asiainfo.gim.common.rest.RestSession;
 import com.asiainfo.gim.common.rest.exception.RestException;
 import com.asiainfo.gim.common.spring.SpringContext;
+import com.asiainfo.gim.server.Constant;
 import com.asiainfo.gim.server.domain.Token;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -38,20 +39,20 @@ public class AuthorizationFilter implements ContainerRequestFilter
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException
 	{
-		if (!StringUtils.equals(context.getUriInfo().getPath(), "token"))
+		if (context.getHeaders().containsKey("X-AUTH-TOKEN"))
 		{
-			if (context.getHeaders().containsKey("X-AUTH-TOKEN"))
+			String tokenId = context.getHeaders().get("X-AUTH-TOKEN").get(0);
+			if (!StringUtils.equals(tokenId, Constant.INTERNAL_TOKEN))
 			{
-				String tokenId = context.getHeaders().get("X-AUTH-TOKEN").get(0);
 				if (!authorise(tokenId))
 				{
 					context.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 				}
 			}
-			else
-			{
-				context.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
-			}
+		}
+		else
+		{
+			context.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 		}
 	}
 

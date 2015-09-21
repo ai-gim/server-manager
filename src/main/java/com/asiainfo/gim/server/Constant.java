@@ -14,6 +14,8 @@ package com.asiainfo.gim.server;
  */
 public interface Constant
 {
+	public static final String INTERNAL_TOKEN = "E89CAF25-0479-4DE0-AB9B-C9E8F03EC365";
+	
 	public static interface CacheName
 	{
 		public static final String SERVER_CACHE = "SERVER_CACHE";
