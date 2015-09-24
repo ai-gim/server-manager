@@ -1,20 +1,15 @@
 <project name="gim-server-manager-deploy" default="build" basedir="..">
-	
-	<property name="USER" value="root"></property>
-	<property name="PASSWD" value="123456"></property>
-	<property name="HOST" value="172.16.102.122"></property>
-	
 	<target name="deploy">
 		<scp todir="${USER}:${PASSWD}@${HOST}:/usr/local/lib/gim" trust="true">
 			<fileset dir="temp">
-				<include name="server-manager.zip"/>
+				<include name="server-manager.tar.gz"/>
 			</fileset>
 		</scp>
 		<sshexec host="${HOST}" username="${USER}"  password="${PASSWD}" trust="true" command="
 			cd /usr/local/lib/gim;
 			rm -rf server-manager;
-			unzip server-manager.zip;
-			rm -rf server-manager.zip;
+			tar -xzvf server-manager.tar.gz;
+			rm -rf server-manager.tar.gz;
 			cd server-manager/bin;
 			chmod 755 *;
 			./gim-server-manager stop;

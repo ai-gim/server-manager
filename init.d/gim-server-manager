@@ -1,0 +1,35 @@
+#!/bin/bash
+# chkconfig: - 94 75
+# description: gim server-manager service
+
+start() {
+/usr/local/lib/gim/server-manager/bin/gim-server-manager start
+}
+
+stop() {
+/usr/local/lib/gim/server-manager/bin/gim-server-manager stop
+}
+
+status() {
+/usr/local/lib/gim/server-manager/bin/gim-server-manager status
+}
+
+# See how we were called.
+case "$1" in
+  start)
+start
+;;
+  status)
+status
+;;
+  stop)
+stop
+;;
+  restart)
+stop
+start
+;;
+  *)
+echo $"Usage: $0 {start|stop|status|restart}"
+exit 2
+esac
