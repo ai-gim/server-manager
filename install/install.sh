@@ -26,4 +26,12 @@ chmod 755 bin/*
 chmod 755 /etc/rc.d/init.d/gim-server-manager
 chkconfig gim-server-manager on
 
+path=$(pwd)
+mysql -uroot << EOF
+use gim
+source $path/sql/create_objects.sql;
+EOF
+
+rm -rf $install_dir/server-manager.tar.gz
+
 exit 0

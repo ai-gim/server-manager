@@ -12,6 +12,7 @@
 		<copydir dest="temp/server-manager/bin" src="bin"></copydir>
 		<copydir dest="temp/server-manager/conf" src="conf"></copydir>
 		<copydir dest="temp/server-manager/init.d" src="init.d"></copydir>
+		<copydir dest="temp/server-manager/sql" src="sql"></copydir>
 		<copy tofile="temp/server-manager/server-manager.jar" file="target/server-manager-${VERSION}.jar"></copy>
 	</target>
 	
