@@ -12,6 +12,7 @@ package com.asiainfo.gim.server.monitor;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
@@ -64,7 +65,7 @@ public class ServerStatusCollectJob implements Job
 					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
 					serverRuntime.setMetrics(null);
 				}
-				else if ((System.currentTimeMillis() - serverRuntime.getReportTime().getTime()) > 60 * 1000)
+				else if ((System.currentTimeMillis() - serverRuntime.getReportTime().getTime()) > NumberUtils.toInt(SpringContext.getProperty("agent.server.unreachable.time")) * 60000)
 				{
 					serverRuntime.setStatus(ServerStatus.UNREACHABLE);
 					serverRuntime.setMetrics(null);
